@@ -9,6 +9,7 @@ public class EnemySpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Crystal = GameObject.FindWithTag("Crystal");
         StartCoroutine(SpawnEnemies());
     }
 
