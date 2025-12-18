@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        Crystal = GameObject.FindWithTag("Crystal");
         agent.SetDestination(Crystal.transform.position);
     }
 
