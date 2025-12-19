@@ -128,7 +128,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   agent: {fileID: 0}
-  Crystal: {fileID: 5644355200013519670, guid: d40af56e2d4af644ca30bc2bd83edc64, type: 3}
+  Crystal: {fileID: 0}
+  Gold: {fileID: 0}
+  maxHealth: 3
 --- !u!195 &728618913850707894
 NavMeshAgent:
   m_ObjectHideFlags: 0

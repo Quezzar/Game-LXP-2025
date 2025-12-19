@@ -23,7 +23,7 @@ public class Crystal : MonoBehaviour
     {
         if (collision.collider.gameObject.tag == "Enemy")
         {
-            print("Crystal hit by Enemy");
+            //print("Crystal hit by Enemy");
             Destroy(collision.collider.gameObject);
             health -= 10f; 
         }
