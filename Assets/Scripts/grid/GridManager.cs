@@ -2,11 +2,18 @@ using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
+    [Header("Grid Settings")]
     public int width = 10;
     public int height = 10;
     public float cellSize = 1f;
 
+    [Header("Visual Settings")]
+    public Material freeMaterial;
+    public Material occupiedMaterial;
+    public float visualHeight = 0.01f;
+
     private bool[,] occupied;
+    private GameObject[,] visuals;
 
     private int offsetX;
     private int offsetZ;
@@ -17,78 +24,91 @@ public class GridManager : MonoBehaviour
         offsetZ = height / 2;
 
         occupied = new bool[width, height];
+        visuals = new GameObject[width, height];
 
-        Debug.Log($"[GridManager] Init grid {width}x{height}, offsetX={offsetX}, offsetZ={offsetZ}");
+        CreateVisualGrid();
+        HideGridVisuals();
+
+        Debug.Log("[GridManager] Grid initialized (centered & fixed)");
     }
 
-    // Grille -> Monde
+    // ================= GRID LOGIC =================
+
     public Vector3 GetWorldPosition(int x, int z)
     {
-        Vector3 worldPos = new Vector3(
-            (x - offsetX) * cellSize,
-            0,
-            (z - offsetZ) * cellSize
-        );
+        // 🔹 POSITION AU CENTRE DE LA CASE
+        float worldX = (x - offsetX + 0.5f) * cellSize;
+        float worldZ = (z - offsetZ + 0.5f) * cellSize;
 
-        Debug.Log($"[GridManager] Grid → World | grid({x},{z}) → world{worldPos}");
-        return worldPos;
+        return new Vector3(worldX, 0f, worldZ);
     }
 
-    // Monde -> Grille
     public Vector2Int GetGridPosition(Vector3 worldPos)
     {
         int x = Mathf.FloorToInt(worldPos.x / cellSize + offsetX);
         int z = Mathf.FloorToInt(worldPos.z / cellSize + offsetZ);
 
-        Vector2Int gridPos = new Vector2Int(x, z);
-
-        Debug.Log($"[GridManager] World → Grid | world{worldPos} → grid({x},{z})");
-        return gridPos;
+        return new Vector2Int(x, z);
     }
 
     public bool CanPlace(Vector2Int pos)
     {
-        Debug.Log($"[GridManager] CanPlace check grid({pos.x},{pos.y})");
-
         if (pos.x < 0 || pos.y < 0 || pos.x >= width || pos.y >= height)
-        {
-            Debug.LogWarning("[GridManager] ❌ Out of bounds");
             return false;
-        }
 
-        bool free = !occupied[pos.x, pos.y];
-        Debug.Log(free ? "[GridManager] ✅ Cell free" : "[GridManager] ❌ Cell occupied");
-        return free;
+        return !occupied[pos.x, pos.y];
     }
 
     public void Occupy(Vector2Int pos)
     {
-        Debug.Log($"[GridManager] Occupy grid({pos.x},{pos.y})");
         occupied[pos.x, pos.y] = true;
+        UpdateVisual(pos);
     }
 
-    void OnDrawGizmos()
+    // ================= VISUAL GRID =================
+
+    void CreateVisualGrid()
     {
-        Gizmos.color = Color.green;
-
-        int ox = width / 2;
-        int oz = height / 2;
-
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
             {
-                Vector3 pos = new Vector3(
-                    (x - ox) * cellSize,
-                    0,
-                    (z - oz) * cellSize
-                );
+                GameObject cell = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                cell.name = $"Cell_{x}_{z}";
+                cell.transform.parent = transform;
 
-                Gizmos.DrawWireCube(
-                    pos + new Vector3(cellSize / 2, 0, cellSize / 2),
-                    new Vector3(cellSize, 0.01f, cellSize)
-                );
+                Vector3 pos = GetWorldPosition(x, z);
+                pos.y = visualHeight;
+
+                cell.transform.position = pos;
+                cell.transform.rotation = Quaternion.Euler(90, 0, 0);
+                cell.transform.localScale = Vector3.one * cellSize;
+
+                Destroy(cell.GetComponent<Collider>());
+
+                cell.GetComponent<MeshRenderer>().material = freeMaterial;
+
+                visuals[x, z] = cell;
             }
         }
+    }
+
+    public void ShowGridVisuals()
+    {
+        foreach (GameObject cell in visuals)
+            cell.SetActive(true);
+    }
+
+    public void HideGridVisuals()
+    {
+        foreach (GameObject cell in visuals)
+            cell.SetActive(false);
+    }
+
+    void UpdateVisual(Vector2Int pos)
+    {
+        visuals[pos.x, pos.y]
+            .GetComponent<MeshRenderer>()
+            .material = occupiedMaterial;
     }
 }
