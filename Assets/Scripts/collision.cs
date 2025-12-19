@@ -17,7 +17,7 @@ public class Munition : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            Destroy(collision.gameObject); // détruit l'Enemy
+            //Destroy(collision.gameObject); // détruit l'Enemy
             Destroy(gameObject); // détruit la Munition
         }
     }

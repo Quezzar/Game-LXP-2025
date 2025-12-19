@@ -23,6 +23,7 @@ public class BatimentShooter_NoFirePoint : MonoBehaviour
         fireTimer += Time.deltaTime;
 
         DetectEnemy();
+        RotateTowardsTarget();
 
         Debug.Log("[Batiment] Target = " + (currentTarget != null ? currentTarget.name : "AUCUNE"));
 
@@ -32,6 +33,21 @@ public class BatimentShooter_NoFirePoint : MonoBehaviour
             fireTimer = 0f;
         }
     }
+
+    void RotateTowardsTarget()
+{
+    if (currentTarget == null)
+        return;
+
+    Vector3 direction = currentTarget.position - transform.position;
+    direction.y = 0f; // rotation horizontale uniquement
+
+    if (direction != Vector3.zero)
+    {
+        transform.rotation = Quaternion.LookRotation(direction);
+    }
+}
+
 
     void DetectEnemy()
     {
@@ -59,7 +75,7 @@ public class BatimentShooter_NoFirePoint : MonoBehaviour
             return;
         }
 
-        Vector3 spawnPos = transform.position + Vector3.up * 1f;
+        Vector3 spawnPos = transform.position + Vector3.up * 2f;
         GameObject munition = Instantiate(munitionPrefab, spawnPos, Quaternion.identity);
 
         Debug.Log("[Batiment] Munition créée");
