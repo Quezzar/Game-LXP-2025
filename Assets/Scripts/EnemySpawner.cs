@@ -24,7 +24,7 @@ public class EnemySpawner : MonoBehaviour
         {
             Vector3 direction = Random.onUnitSphere;
             direction.y = 0;
-            Vector3 offset = direction.normalized * 20f;
+            Vector3 offset = direction.normalized * 100f;
             Vector3 spawnPosition = Crystal.transform.position + offset;
             Instantiate(EnemyPrefab, spawnPosition, Quaternion.identity);
 

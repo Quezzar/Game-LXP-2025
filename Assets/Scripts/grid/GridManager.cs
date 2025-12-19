@@ -3,8 +3,8 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public int width = 10;
-    public int height = 10;
+    public int width = 100;
+    public int height = 100;
     public float cellSize = 1f;
 
     [Header("Visual Settings")]
@@ -111,4 +111,13 @@ public class GridManager : MonoBehaviour
             .GetComponent<MeshRenderer>()
             .material = occupiedMaterial;
     }
+
+    public void Free(Vector2Int pos)
+{
+    if (pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height)
+    {
+        occupied[pos.x, pos.y] = false;
+        UpdateVisual(pos); // Remet la couleur "Libre"
+    }
+}
 }
